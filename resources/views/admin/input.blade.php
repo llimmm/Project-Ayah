@@ -3,7 +3,7 @@
 
 @section('isi')
 @php($u = auth()->user())
-<div class="kepala">
+<div class="kepala-panel">
     <div>
         <h1>Input harga harian</h1>
         <p>{{ $pasar->nama }} · {{ tgl($tanggal, true) }}
@@ -20,7 +20,7 @@
             </select>
         </label>
     @endif
-    <noscript><button class="btn garis">Buka</button></noscript>
+    <noscript><button class="btn kedua">Buka</button></noscript>
 </form>
 
 <div class="catatan">
@@ -33,7 +33,7 @@
     @csrf
     <input type="hidden" name="tanggal" value="{{ $tanggal }}">
     <input type="hidden" name="pasar_id" value="{{ $pasar->id }}">
-    <div class="tabel-wrap">
+    <div class="tabel">
         <table>
             <thead><tr><th>Komoditas</th><th class="r">Data sebelumnya</th><th class="r">Harga hari ini (Rp)</th><th class="r">Perubahan</th><th>Status</th></tr></thead>
             <tbody>
@@ -65,9 +65,9 @@
         </table>
     </div>
     <div class="aksi-bawah">
-        <button class="btn garis" name="aksi" value="draft">Simpan draft</button>
+        <button class="btn kedua" name="aksi" value="draft">Simpan draft</button>
         <button class="btn" name="aksi" value="ajukan">Ajukan ke verifikator</button>
-        <span class="kecil muted" id="ringkas"></span>
+        <span class="caption muted" id="ringkas"></span>
     </div>
 </form>
 @endsection

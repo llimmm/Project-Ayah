@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias(['peran' => \App\Http\Middleware\Peran::class]);
         $middleware->redirectGuestsTo('/masuk');
         $middleware->redirectUsersTo('/admin');
+        // Cloudflare Tunnel: cloudflared jalan di laptop yang sama dan meneruskan X-Forwarded-Proto: https.
+        $middleware->trustProxies(at: ['127.0.0.1', '::1']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

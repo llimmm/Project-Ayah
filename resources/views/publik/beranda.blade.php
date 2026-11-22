@@ -2,96 +2,137 @@
 @section('judul', 'Beranda')
 
 @section('isi')
-@if (! $r['tanggal'])
-    <div class="catatan">Belum ada data harga yang terverifikasi. Data akan tampil setelah enumerator menginput dan verifikator menyetujuinya.</div>
-@else
-<section class="pembuka">
-    <div class="tanggal">Data {{ tgl($r['tanggal'], true) }} · {{ $jumlahPasar }} pasar dipantau</div>
-    <h1>Harga {{ $r['naik'] }} komoditas naik, {{ $r['turun'] }} turun, dan {{ $r['stabil'] }} stabil dibanding data sebelumnya.</h1>
-    <p>Rata-rata harga eceran di pasar tradisional Kabupaten Sumbawa Barat, dibandingkan dengan data {{ tgl($r['kemarin']) }}.
-        Perubahan di bawah {{ persen(\App\Support\Harga::AMBANG_STABIL, 0, false) }} dihitung stabil.</p>
+<section class="hero">
+    <div class="wrap">
+        <div>
+            <span class="eyebrow">
+                @if ($r['tanggal']) Data {{ tgl($r['tanggal'], true) }} · {{ $jumlahPasar }} pasar dipantau @else Pemantauan harga pangan @endif
+            </span>
+            <h1>Harga pangan Sumbawa Barat, terpantau setiap hari.</h1>
+            @if ($r['tanggal'])
+                <p class="lead">Pada data terakhir, <b>{{ $r['naik'] }} komoditas naik</b>, {{ $r['turun'] }} turun, dan {{ $r['stabil'] }} stabil
+                    dibanding {{ tgl($r['kemarin']) }}. Semua angka berasal dari enumerator di pasar tradisional dan sudah diverifikasi.</p>
+            @else
+                <p class="lead">Belum ada data harga yang terverifikasi. Data akan tampil setelah enumerator menginput dan verifikator menyetujuinya.</p>
+            @endif
+            <div class="tombol">
+                <a class="btn" href="{{ route('harga') }}">Lihat harga hari ini</a>
+                <a class="btn kedua" href="{{ route('panduan') }}">Cara membaca data</a>
+            </div>
+        </div>
+        <div class="ilustrasi"><x-ilustrasi jenis="pasar" /></div>
+    </div>
 </section>
 
-<section class="seksi grid g4" aria-label="Ringkasan">
-    <div class="kartu stat">
-        <h3>IPH minggu terakhir</h3>
+<section class="band">
+    <div class="wrap">
         @php($iphAkhir = $iph->last())
-        <div class="nilai">{{ $iphAkhir ? persen($iphAkhir->perubahan_iph) : '-' }}</div>
-        <p class="ket">{{ $iphAkhir ? 'Minggu ke-' . $iphAkhir->minggu_ke . ' ' . bulan_nama($iphAkhir->bulan) . ' ' . $iphAkhir->tahun : 'Belum ada data' }}</p>
-    </div>
-    <div class="kartu stat">
-        <h3>Inflasi NTB, tahunan (YoY)</h3>
-        <div class="nilai">{{ $inflasi ? persen($inflasi->yoy, 2, false) : '-' }}</div>
-        <p class="ket">{{ $inflasi ? bulan_nama($inflasi->bulan) . ' ' . $inflasi->tahun . ' · MtM ' . persen($inflasi->mtm) : 'Belum ada data' }}</p>
-    </div>
-    <div class="kartu stat">
-        <h3>Di atas harga acuan (HET/HAP)</h3>
-        <div class="nilai">{{ $r['di_atas_acuan'] }} <span class="muted kecil">komoditas</span></div>
-        <p class="ket">Dari {{ $r['baris']->filter(fn ($b) => $b->komoditas->harga_acuan)->count() }} komoditas yang punya harga acuan</p>
-    </div>
-    <div class="kartu stat">
-        <h3>Komoditas dipantau</h3>
-        <div class="nilai">{{ $r['baris']->count() }}</div>
-        <p class="ket">Naik {{ $r['naik'] }} · Turun {{ $r['turun'] }} · Stabil {{ $r['stabil'] }}</p>
+        <div class="grid g4">
+            <a class="fitur teal" href="{{ route('iph') }}">
+                <span class="label">IPH minggu terakhir</span>
+                <span class="angka">{{ $iphAkhir ? persen($iphAkhir->perubahan_iph) : '-' }}</span>
+                <p class="ket">{{ $iphAkhir ? 'Minggu ke-' . $iphAkhir->minggu_ke . ' ' . bulan_nama($iphAkhir->bulan) . ' ' . $iphAkhir->tahun : 'Belum ada data' }}</p>
+            </a>
+            <a class="fitur pink" href="{{ route('harga') }}">
+                <span class="label">Di atas harga acuan</span>
+                <span class="angka">{{ $r['di_atas_acuan'] }} <small>komoditas</small></span>
+                <p class="ket">dari {{ $r['baris']->filter(fn ($b) => $b->komoditas->harga_acuan)->count() }} komoditas yang punya HET/HAP</p>
+            </a>
+            <a class="fitur lavender" href="{{ route('inflasi') }}">
+                <span class="label">Inflasi NTB (YoY)</span>
+                <span class="angka">{{ $inflasi ? persen($inflasi->yoy, 2, false) : '-' }}</span>
+                <p class="ket">{{ $inflasi ? bulan_nama($inflasi->bulan) . ' ' . $inflasi->tahun . ' · bulanan ' . persen($inflasi->mtm) : 'Belum ada data' }}</p>
+            </a>
+            <a class="fitur peach" href="{{ route('disparitas') }}">
+                <span class="label">Komoditas dipantau</span>
+                <span class="angka">{{ $r['baris']->count() }}</span>
+                <p class="ket">Naik {{ $r['naik'] }} · Turun {{ $r['turun'] }} · Stabil {{ $r['stabil'] }}</p>
+            </a>
+        </div>
     </div>
 </section>
 
 @if ($sorotan->isNotEmpty())
-<section class="seksi">
-    <h2>Pergerakan terbesar</h2>
-    <div class="grid g4">
-        @foreach ($sorotan as $s)
-            <a class="kartu sorot" href="{{ route('komoditas', $s->komoditas) }}" style="color:inherit;text-decoration:none">
-                <span class="nama">{{ $s->komoditas->nama }}</span>
-                <span class="harga">{{ rupiah($s->harga) }}<span class="muted kecil">/{{ $s->komoditas->satuan }}</span></span>
-                <x-arah :n="$s->ubah_harian" />
-                <div style="height:44px;margin-top:8px"><canvas data-spark='@json($spark[$s->komoditas->id] ?? [])' data-arah="{{ $s->arah }}" aria-label="Tren 30 hari {{ $s->komoditas->nama }}" role="img"></canvas></div>
-                <span class="kecil muted">30 hari terakhir</span>
-            </a>
-        @endforeach
+<section class="band">
+    <div class="wrap">
+        <div class="band-head">
+            <div>
+                <span class="eyebrow">Sorotan</span>
+                <h2>Pergerakan terbesar</h2>
+                <p>Empat komoditas dengan perubahan harga paling besar dibanding data sebelumnya.</p>
+            </div>
+        </div>
+        <div class="grid g4">
+            @foreach ($sorotan as $s)
+                <a class="kartu gerak" href="{{ route('komoditas', $s->komoditas) }}">
+                    <span class="nama">{{ $s->komoditas->nama }}</span>
+                    <span class="harga">{{ rupiah($s->harga) }}<small> /{{ $s->komoditas->satuan }}</small></span>
+                    <x-arah :n="$s->ubah_harian" />
+                    <div class="spark"><canvas data-spark='@json($spark[$s->komoditas->id] ?? [])' data-arah="{{ $s->arah }}" role="img" aria-label="Tren 30 hari {{ $s->komoditas->nama }}"></canvas></div>
+                    <span class="caption muted">30 hari terakhir</span>
+                </a>
+            @endforeach
+        </div>
     </div>
 </section>
 @endif
 
-<section class="seksi">
-    <div class="kepala">
-        <div>
-            <h2>Harga rata-rata hari ini</h2>
-            <p>Rata-rata semua pasar. Klik nama komoditas untuk melihat tren dan harga per pasar.</p>
+@if ($r['tanggal'])
+<section class="band">
+    <div class="wrap">
+        <div class="band-head">
+            <div>
+                <span class="eyebrow">Harga terbaru</span>
+                <h2>Rata-rata semua pasar</h2>
+                <p>Klik nama komoditas untuk melihat tren dan harga di tiap pasar.</p>
+            </div>
+            <a class="btn kedua" href="{{ route('harga') }}">Pilih pasar atau tanggal</a>
         </div>
-        <a class="btn garis" href="{{ route('harga') }}">Pilih pasar atau tanggal lain</a>
+        @include('publik._tabel_harga', ['baris' => $r['baris']])
     </div>
-    @include('publik._tabel_harga', ['baris' => $r['baris']])
 </section>
 @endif
 
-<section class="seksi grid g2">
-    <div class="kartu">
-        <div class="kepala" style="margin-bottom:8px">
-            <h2>Perubahan IPH mingguan</h2>
-            <a href="{{ route('iph') }}" class="kecil">Lihat semua</a>
+<section class="band">
+    <div class="wrap grid g-7-5">
+        <div class="kartu lega">
+            <div class="band-head" style="margin-bottom:8px">
+                <div><span class="eyebrow">Proksi inflasi</span><h3 class="title-lg" style="margin:0">Perubahan IPH mingguan</h3></div>
+                <a href="{{ route('iph') }}" class="btn teks">Lihat semua</a>
+            </div>
+            @if ($iph->isEmpty())
+                <p class="muted">Belum ada data IPH.</p>
+            @else
+                <div class="legenda"><span><i class="kotak" style="background:var(--div-naik)"></i>Harga naik</span><span><i class="kotak" style="background:var(--div-turun)"></i>Harga turun</span></div>
+                <div class="grafik pendek"><canvas id="g-iph" role="img" aria-label="Grafik perubahan IPH 12 minggu terakhir"></canvas></div>
+                <p class="sumber">Sumber: BPS dan Kemendagri. IPH dipakai sebagai proksi inflasi karena Sumbawa Barat bukan kota sampel IHK.</p>
+            @endif
         </div>
-        @if ($iph->isEmpty())
-            <p class="muted">Belum ada data IPH.</p>
-        @else
-            <div class="legenda"><span><i class="kotak" style="background:var(--div-naik)"></i>Harga naik</span><span><i class="kotak" style="background:var(--div-turun)"></i>Harga turun</span></div>
-            <div class="grafik pendek"><canvas id="g-iph" role="img" aria-label="Grafik perubahan IPH 12 minggu terakhir"></canvas></div>
-            <p class="sumber">Sumber: BPS dan Kemendagri. IPH (Indikator Perubahan Harga) adalah proksi inflasi untuk kabupaten yang bukan kota IHK.</p>
-        @endif
+        <div class="fitur ochre">
+            <span class="label">Berita & kegiatan TPID</span>
+            @forelse ($berita as $b)
+                <a class="berita-item" href="{{ route('berita.baca', $b->slug) }}">
+                    <span class="caption">{{ \App\Models\Berita::KATEGORI[$b->kategori] ?? $b->kategori }} · {{ tgl($b->terbit_pada) }}</span>
+                    <p class="title-sm">{{ $b->judul }}</p>
+                </a>
+            @empty
+                <p>Belum ada berita.</p>
+            @endforelse
+            <div style="margin-top:auto;padding-top:16px"><a class="btn di-warna" href="{{ route('berita') }}">Semua berita</a></div>
+        </div>
     </div>
-    <div class="kartu">
-        <div class="kepala" style="margin-bottom:8px">
-            <h2>Berita & kegiatan TPID</h2>
-            <a href="{{ route('berita') }}" class="kecil">Semua berita</a>
+</section>
+
+<section class="band">
+    <div class="wrap">
+        <div class="cta">
+            <div>
+                <h2>Bingung membaca IPH atau disparitas?</h2>
+                <p>Panduan singkat menjelaskan asal data, arti naik-turun harga, harga acuan HET/HAP, dan cara mengunduh tabel untuk laporan.</p>
+                <a class="btn" href="{{ route('panduan') }}">Buka panduan</a>
+            </div>
+            <x-ilustrasi jenis="buku" />
         </div>
-        @forelse ($berita as $b)
-            <a class="berita-kartu" href="{{ route('berita.baca', $b->slug) }}" style="padding:10px 0;border-bottom:1px solid var(--line)">
-                <span class="kecil muted">{{ \App\Models\Berita::KATEGORI[$b->kategori] ?? $b->kategori }} · {{ tgl($b->terbit_pada) }}</span>
-                <h3 style="margin:0">{{ $b->judul }}</h3>
-            </a>
-        @empty
-            <p class="muted">Belum ada berita.</p>
-        @endforelse
     </div>
 </section>
 @endsection

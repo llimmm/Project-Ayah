@@ -2,7 +2,7 @@
 @section('judul', $d['judul'])
 
 @section('isi')
-<div class="kepala">
+<div class="kepala-panel">
     <div>
         <h1>{{ $d['judul'] }}</h1>
         @if ($d['kunci'] === 'iph')<p>Salin angka IPH resmi dari rilis BPS atau bahan Rakor Pengendalian Inflasi Kemendagri.</p>@endif
@@ -14,11 +14,11 @@
 @if (in_array($d['kunci'], ['komoditas', 'pasar', 'pengguna', 'berita']))
 <form class="filter" method="get">
     <label>Cari <input name="cari" value="{{ request('cari') }}" placeholder="Ketik nama atau judul"></label>
-    <button class="btn garis">Cari</button>
+    <button class="btn kedua">Cari</button>
 </form>
 @endif
 
-<div class="tabel-wrap">
+<div class="tabel">
     <table>
         <thead><tr>@foreach ($d['kolom'] as $l)<th>{{ $l }}</th>@endforeach<th></th></tr></thead>
         <tbody>
@@ -58,7 +58,7 @@
                     </td>
                 @endforeach
                 <td class="r" style="white-space:nowrap">
-                    <a class="btn garis kecil" href="{{ route('admin.master.ubah', [$d['kunci'], $item->id]) }}">Ubah</a>
+                    <a class="btn kedua kecil" href="{{ route('admin.master.ubah', [$d['kunci'], $item->id]) }}">Ubah</a>
                     <form method="post" action="{{ route('admin.master.hapus', [$d['kunci'], $item->id]) }}" style="display:inline" class="form-hapus">
                         @csrf @method('delete')
                         <button class="btn bahaya kecil">Hapus</button>

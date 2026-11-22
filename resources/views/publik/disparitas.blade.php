@@ -2,18 +2,15 @@
 @section('judul', 'Disparitas Harga Antarpasar')
 
 @section('isi')
-<div class="kepala">
-    <div>
-        <h1>Disparitas harga antarpasar</h1>
-        <p>Selisih harga komoditas yang sama di pasar berbeda pada {{ $tanggal ? tgl($tanggal, true) : '-' }}.</p>
-    </div>
-</div>
+@include('publik._kepala', ['eyebrow' => 'Disparitas', 'judul' => 'Beda harga antarpasar', 'lead' => 'Selisih harga komoditas yang sama di pasar berbeda pada ' . ($tanggal ? tgl($tanggal, true) : '-') . '.'])
+
+<div class="wrap">
 
 <form class="filter" method="get">
     <label>Tanggal <input type="date" name="tanggal" value="{{ $tanggal }}" max="{{ today()->toDateString() }}"></label>
     <button class="btn">Tampilkan</button>
     @if ($data->isNotEmpty())
-        <a class="btn garis" href="{{ request()->fullUrlWithQuery(['unduh' => 'csv', 'tanggal' => $tanggal]) }}">Unduh CSV</a>
+        <a class="btn kedua" href="{{ request()->fullUrlWithQuery(['unduh' => 'csv', 'tanggal' => $tanggal]) }}">Unduh CSV</a>
     @endif
 </form>
 
@@ -23,9 +20,9 @@
 </div>
 
 @if ($data->isEmpty())
-    <div class="catatan warning">Tidak ada data terverifikasi pada tanggal ini.</div>
+    <div class="catatan waspada">Tidak ada data terverifikasi pada tanggal ini.</div>
 @else
-<div class="tabel-wrap">
+<div class="tabel">
     <table>
         <thead>
         <tr>
@@ -53,7 +50,7 @@
                 <td class="r num">{{ rupiah($d->selisih) }}</td>
                 <td class="r num">
                     {{ persen($d->kv, 2, false) }}
-                    @if ($d->kv > 10)<br><span class="lencana warning">Perlu ditelusuri</span>@endif
+                    @if ($d->kv > 10)<br><span class="lencana waspada">Perlu ditelusuri</span>@endif
                 </td>
             </tr>
         @endforeach
@@ -62,4 +59,5 @@
 </div>
 <p class="sumber">Diurutkan dari disparitas terbesar. Tanda "-" berarti pasar tersebut tidak melaporkan harga komoditas itu pada tanggal ini.</p>
 @endif
+</div>
 @endsection

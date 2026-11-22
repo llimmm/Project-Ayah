@@ -2,9 +2,9 @@
 @section('judul', 'Periksa isian')
 
 @section('isi')
-<div class="kepala">
+<div class="kepala-panel">
     <div>
-        <p class="kecil"><a href="{{ route('admin.antrean') }}">Antrean verifikasi</a></p>
+        <p class="caption"><a href="{{ route('admin.antrean') }}">Antrean verifikasi</a></p>
         <h1>{{ $pasar->nama }}</h1>
         <p>{{ tgl($tanggal, true) }} · pembanding: data pasar ini {{ $sebelum ? tgl($sebelum) : '(belum ada)' }} dan rata-rata pasar lain yang sudah disetujui hari ini.</p>
     </div>
@@ -17,7 +17,7 @@
 
 <form method="post">
     @csrf
-    <div class="tabel-wrap">
+    <div class="tabel">
         <table>
             <thead>
             <tr>
@@ -33,15 +33,15 @@
                 @php($banding = $pembanding[$b->komoditas_id] ?? null)
                 @php($selisih = \App\Support\Harga::ubah($b->harga, $banding))
                 @php($janggal = ($ubah !== null && abs($ubah) > $ambang) || ($selisih !== null && abs($selisih) > $ambang))
-                <tr @if ($janggal) style="background:var(--warning-soft)" @endif>
+                <tr @if ($janggal) style="background:var(--waspada-soft)" @endif>
                     <td>@if ($b->status === 'diajukan')<input type="checkbox" name="id[]" value="{{ $b->id }}" checked class="pilih">@endif</td>
                     <td>{{ $b->komoditas->nama }}<span class="sub">per {{ $b->komoditas->satuan }}</span></td>
                     <td class="r num"><b>{{ rupiah($b->harga) }}</b></td>
                     <td class="r num muted">{{ rupiah($lama) }}</td>
                     <td class="r"><x-arah :n="$ubah" /></td>
                     <td class="r num">{{ rupiah($banding) }}@if ($selisih !== null)<span class="sub">{{ persen($selisih) }}</span>@endif</td>
-                    <td><span class="lencana {{ $b->status }}">{{ ucfirst($b->status) }}</span>@if ($janggal) <span class="lencana warning">Cek</span>@endif</td>
-                    <td class="kecil muted">{{ $b->penginput?->name ?? '-' }}</td>
+                    <td><span class="lencana {{ $b->status }}">{{ ucfirst($b->status) }}</span>@if ($janggal) <span class="lencana waspada">Cek</span>@endif</td>
+                    <td class="caption muted">{{ $b->penginput?->name ?? '-' }}</td>
                 </tr>
             @endforeach
             </tbody>

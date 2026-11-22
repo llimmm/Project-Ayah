@@ -2,9 +2,9 @@
 @section('judul', ($item->exists ? 'Ubah ' : 'Tambah ') . $d['judul'])
 
 @section('isi')
-<div class="kepala">
+<div class="kepala-panel">
     <div>
-        <p class="kecil"><a href="{{ route('admin.master', $d['kunci']) }}">{{ $d['judul'] }}</a></p>
+        <p class="caption"><a href="{{ route('admin.master', $d['kunci']) }}">{{ $d['judul'] }}</a></p>
         <h1>{{ $item->exists ? 'Ubah' : 'Tambah' }} {{ strtolower($d['judul']) }}</h1>
     </div>
 </div>
@@ -43,7 +43,7 @@
                         @break
                     @case('image')
                     @case('file')
-                        @if ($item->$f)<span class="kecil">Berkas saat ini: <a href="{{ asset('storage/' . $item->$f) }}" target="_blank">{{ basename($item->$f) }}</a>. Unggah baru untuk mengganti.</span>@endif
+                        @if ($item->$f)<span class="caption">Berkas saat ini: <a href="{{ asset('storage/' . $item->$f) }}" target="_blank">{{ basename($item->$f) }}</a>. Unggah baru untuk mengganti.</span>@endif
                         <input id="f-{{ $f }}" type="file" name="{{ $f }}" accept="{{ $tipe === 'image' ? 'image/jpeg,image/png,image/webp' : 'application/pdf' }}">
                         @break
                     @case('datetime')
@@ -63,7 +63,7 @@
 
     <div style="display:flex;gap:10px;margin-top:8px">
         <button class="btn">Simpan</button>
-        <a class="btn garis" href="{{ route('admin.master', $d['kunci']) }}">Batal</a>
+        <a class="btn kedua" href="{{ route('admin.master', $d['kunci']) }}">Batal</a>
     </div>
 </form>
 @endsection

@@ -2,12 +2,9 @@
 @section('judul', 'Inflasi')
 
 @section('isi')
-<div class="kepala">
-    <div>
-        <h1>Inflasi {{ $wilayah }}</h1>
-        <p>Kabupaten Sumbawa Barat bukan kota sampel IHK, jadi pembandingnya inflasi Provinsi NTB dan kota IHK di NTB.</p>
-    </div>
-</div>
+@include('publik._kepala', ['eyebrow' => 'Inflasi', 'judul' => 'Inflasi ' . $wilayah, 'lead' => 'Sumbawa Barat bukan kota sampel IHK, jadi pembandingnya inflasi Provinsi NTB dan kota IHK di NTB.'])
+
+<div class="wrap">
 
 <form class="filter" method="get">
     <label>Wilayah
@@ -16,21 +13,21 @@
         </select>
     </label>
     <button class="btn">Tampilkan</button>
-    @if ($data->isNotEmpty())<a class="btn garis" href="{{ request()->fullUrlWithQuery(['unduh' => 'csv']) }}">Unduh CSV</a>@endif
+    @if ($data->isNotEmpty())<a class="btn kedua" href="{{ request()->fullUrlWithQuery(['unduh' => 'csv']) }}">Unduh CSV</a>@endif
 </form>
 
 @if (! $terakhir)
     <div class="catatan">Belum ada data inflasi untuk wilayah ini.</div>
 @else
-<div class="grid g4" style="margin-bottom:16px">
-    <div class="kartu stat"><h3>Bulanan (MtM)</h3><div class="nilai">{{ persen($terakhir->mtm) }}</div><p class="ket">{{ bulan_nama($terakhir->bulan) }} {{ $terakhir->tahun }} terhadap bulan sebelumnya</p></div>
-    <div class="kartu stat"><h3>Tahun kalender (YtD)</h3><div class="nilai">{{ persen($terakhir->ytd) }}</div><p class="ket">terhadap Desember {{ $terakhir->tahun - 1 }}</p></div>
-    <div class="kartu stat"><h3>Tahunan (YoY)</h3><div class="nilai">{{ persen($terakhir->yoy) }}</div><p class="ket">terhadap {{ bulan_nama($terakhir->bulan) }} {{ $terakhir->tahun - 1 }}</p></div>
-    <div class="kartu stat"><h3>IHK</h3><div class="nilai">{{ angka($terakhir->ihk) }}</div><p class="ket">Indeks Harga Konsumen (2022=100)</p></div>
+<div class="grid g4" style="margin-bottom:24px">
+    <div class="fitur teal"><span class="label">Bulanan (MtM)</span><span class="angka">{{ persen($terakhir->mtm) }}</span><p class="ket">{{ bulan_nama($terakhir->bulan) }} {{ $terakhir->tahun }} terhadap bulan sebelumnya</p></div>
+    <div class="fitur pink"><span class="label">Tahun kalender (YtD)</span><span class="angka">{{ persen($terakhir->ytd) }}</span><p class="ket">terhadap Desember {{ $terakhir->tahun - 1 }}</p></div>
+    <div class="fitur lavender"><span class="label">Tahunan (YoY)</span><span class="angka">{{ persen($terakhir->yoy) }}</span><p class="ket">terhadap {{ bulan_nama($terakhir->bulan) }} {{ $terakhir->tahun - 1 }}</p></div>
+    <div class="fitur peach"><span class="label">IHK</span><span class="angka">{{ angka($terakhir->ihk) }}</span><p class="ket">Indeks Harga Konsumen (2022=100)</p></div>
 </div>
 
-<div class="kartu">
-    <h2>Perkembangan inflasi (%)</h2>
+<div class="kartu lega">
+    <h3 class="title-lg">Perkembangan inflasi (%)</h3>
     <div class="legenda">
         <span><i style="background:var(--series-1)"></i>Bulanan (MtM)</span>
         <span><i style="background:var(--series-2)"></i>Tahun kalender (YtD)</span>
@@ -41,14 +38,14 @@
 </div>
 
 @if ($semuaWilayah->count() > 1)
-<section class="seksi">
-    <h2>Perbandingan wilayah, {{ bulan_nama($terakhir->bulan) }} {{ $terakhir->tahun }}</h2>
-    <div class="tabel-wrap">
+<section class="band-sm">
+    <div class="band-head"><div><span class="eyebrow">{{ bulan_nama($terakhir->bulan) }} {{ $terakhir->tahun }}</span><h2>Perbandingan wilayah</h2></div></div>
+    <div class="tabel">
         <table>
             <thead><tr><th>Wilayah</th><th class="r">IHK</th><th class="r">MtM</th><th class="r">YtD</th><th class="r">YoY</th></tr></thead>
             <tbody>
             @foreach ($semuaWilayah as $w)
-                <tr @if ($w->wilayah === $wilayah) style="background:var(--brand-soft)" @endif>
+                <tr @if ($w->wilayah === $wilayah) style="background:var(--surface-card)" @endif>
                     <td>{{ $w->wilayah }}</td><td class="r num">{{ angka($w->ihk) }}</td>
                     <td class="r num">{{ persen($w->mtm) }}</td><td class="r num">{{ persen($w->ytd) }}</td><td class="r num">{{ persen($w->yoy) }}</td>
                 </tr>
@@ -59,9 +56,9 @@
 </section>
 @endif
 
-<section class="seksi">
-    <h2>Tabel data</h2>
-    <div class="tabel-wrap">
+<section class="band-sm">
+    <div class="band-head"><div><span class="eyebrow">Data</span><h2>Tabel inflasi</h2></div></div>
+    <div class="tabel">
         <table>
             <thead><tr><th>Bulan</th><th class="r">IHK</th><th class="r">MtM</th><th class="r">YtD</th><th class="r">YoY</th></tr></thead>
             <tbody>
@@ -73,6 +70,7 @@
     </div>
 </section>
 @endif
+</div>
 @endsection
 
 @push('js')

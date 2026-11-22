@@ -3,12 +3,14 @@
   if (!window.Chart) return;
   const css = getComputedStyle(document.documentElement);
   const v = (n) => css.getPropertyValue(n).trim();
-  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
-  Chart.defaults.font.size = 12;
-  Chart.defaults.color = v('--ink-2');
-  Chart.defaults.borderColor = v('--line');
+    Chart.defaults.font.size = 12;
+  Chart.defaults.font.family = '"Inter", system-ui, sans-serif';
+  Chart.defaults.color = v('--muted');
+  Chart.defaults.borderColor = v('--grid');
   Chart.defaults.plugins.legend.display = false; // legenda HTML ditulis di halaman
-  Chart.defaults.plugins.tooltip.backgroundColor = '#13243a';
+  Chart.defaults.plugins.tooltip.backgroundColor = '#0a0a0a';
+  Chart.defaults.plugins.tooltip.cornerRadius = 12;
+  Chart.defaults.plugins.tooltip.titleFont = { weight: '600' };
   Chart.defaults.plugins.tooltip.padding = 10;
   Chart.defaults.plugins.tooltip.boxPadding = 4;
   Chart.defaults.maintainAspectRatio = false;
@@ -25,7 +27,7 @@
       const a = chart.tooltip && chart.tooltip.getActiveElements();
       if (!a || !a.length) return;
       const x = a[0].element.x, { top, bottom } = chart.chartArea, ctx = chart.ctx;
-      ctx.save(); ctx.strokeStyle = v('--ink-3'); ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+      ctx.save(); ctx.strokeStyle = v('--muted'); ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
       ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke(); ctx.restore();
     },
   };
@@ -47,7 +49,7 @@
             label: s.nama, data: s.data, spanGaps: true,
             borderColor: s.warna, backgroundColor: s.warna,
             borderWidth: s.utama ? 2.5 : 2, pointRadius: 0, pointHoverRadius: 5,
-            pointHoverBorderColor: v('--surface'), pointHoverBorderWidth: 2, tension: 0.25, order: s.utama ? 0 : 1,
+            pointHoverBorderColor: v('--canvas'), pointHoverBorderWidth: 2, tension: 0.25, order: s.utama ? 0 : 1,
           })),
         },
         options: {
@@ -69,7 +71,7 @@
         options: {
           scales: {
             x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } },
-            y: { ticks: { callback: (n) => n + '%' }, grid: { color: (c) => c.tick.value === 0 ? v('--ink-3') : v('--line') } },
+            y: { ticks: { callback: (n) => n + '%' }, grid: { color: (c) => c.tick.value === 0 ? v('--muted') : v('--grid') } },
           },
           plugins: { tooltip: { callbacks: { label: (c) => ' ' + pct(c.parsed.y) } } },
         },
@@ -81,10 +83,10 @@
       return new Chart(el, {
         type: 'line',
         plugins: [crosshair],
-        data: { labels: label, datasets: series.map((s, i) => ({ label: s.nama, data: s.data, borderColor: seri(i), backgroundColor: seri(i), borderWidth: 2, pointRadius: 3, pointHoverRadius: 6, pointHoverBorderColor: v('--surface'), pointHoverBorderWidth: 2, tension: 0.2 })) },
+        data: { labels: label, datasets: series.map((s, i) => ({ label: s.nama, data: s.data, borderColor: seri(i), backgroundColor: seri(i), borderWidth: 2, pointRadius: 3, pointHoverRadius: 6, pointHoverBorderColor: v('--canvas'), pointHoverBorderWidth: 2, tension: 0.2 })) },
         options: {
           interaction: { mode: 'index', intersect: false },
-          scales: { x: { grid: { display: false } }, y: { ticks: { callback: (n) => n + '%' }, grid: { color: (c) => c.tick.value === 0 ? v('--ink-3') : v('--line') } } },
+          scales: { x: { grid: { display: false } }, y: { ticks: { callback: (n) => n + '%' }, grid: { color: (c) => c.tick.value === 0 ? v('--muted') : v('--grid') } } },
           plugins: { tooltip: { callbacks: { label: (c) => ' ' + c.dataset.label + ': ' + pct(c.parsed.y) } } },
         },
       });
@@ -94,7 +96,7 @@
     spark(el, data, warna) {
       return new Chart(el, {
         type: 'line',
-        data: { labels: data.map((_, i) => i), datasets: [{ data, borderColor: warna || v('--ink-2'), borderWidth: 2, pointRadius: 0, tension: 0.3 }] },
+        data: { labels: data.map((_, i) => i), datasets: [{ data, borderColor: warna || v('--muted'), borderWidth: 2, pointRadius: 0, tension: 0.3 }] },
         options: { events: [], scales: { x: { display: false }, y: { display: false } }, plugins: { tooltip: { enabled: false } }, animation: false },
       });
     },

@@ -1,7 +1,7 @@
 @if ($baris->isEmpty())
     <div class="catatan">Tidak ada data harga terverifikasi untuk pilihan ini.</div>
 @else
-<div class="tabel-wrap">
+<div class="tabel">
     <table>
         <thead>
         <tr>
@@ -26,7 +26,7 @@
                     <td class="r num">
                         @if ($b->komoditas->harga_acuan)
                             {{ rupiah($b->komoditas->harga_acuan) }}
-                            @if ($b->di_atas_acuan)<br><span class="lencana naik">Di atas acuan</span>@endif
+                            @if ($b->di_atas_acuan)<span class="sub"><span class="lencana naik">Di atas acuan</span></span>@endif
                         @else
                             <span class="muted">-</span>
                         @endif
