@@ -1,6 +1,6 @@
 # Handoff: SIPANTAU Harga KSB
 
-Catatan serah terima untuk melanjutkan proyek ini di perangkat lain dengan Claude Code CLI.
+Catatan serah terima untuk melanjutkan proyek ini di perangkat lain dengan Claude Code CLI. Pengerjaan lanjutan dilakukan di lokal saja (clone, revisi, commit lokal, tanpa push).
 Ditulis 22 November 2026, setelah versi pertama dan perombakan desain selesai.
 
 ## Proyek ini apa
@@ -110,32 +110,9 @@ Database di laptop asal tidak ikut dipindahkan. Perangkat baru mulai dari databa
 
 ## Prompt siap tempel
 
-Setelah langkah "Menyiapkan di perangkat baru" selesai, buka terminal di folder proyek, jalankan `claude`, lalu tempel prompt di bawah ini. Isi bagian terakhir dengan pekerjaan yang ingin dilanjutkan.
+Ada di `docs/PROMPT-AYAH.md`:
 
-```text
-Saya melanjutkan proyek SIPANTAU Harga KSB, dashboard pengendalian inflasi daerah
-Kabupaten Sumbawa Barat (Laravel 12 + MySQL, tanpa build step).
+1. **Pertama kali**: Claude menyiapkan stack (PHP, Composer, MySQL/MariaDB, Git), clone repo, membuat database dan `.env`, menjalankan test dan server, lalu siap menerima revisi.
+2. **Sesi berikutnya**: Claude membaca catatan ini, menyalakan server, dan menunggu permintaan.
 
-Sebelum mengubah apa pun:
-1. Baca HANDOFF.md dan README.md sampai habis. Untuk pekerjaan tampilan, baca juga
-   docs/DESIGN-clay.md dan bagian "Aturan desain" di HANDOFF.md.
-2. Cek lingkungan: versi PHP, Composer, koneksi database di .env, lalu jalankan
-   `php artisan test`. Laporkan hasilnya. Kalau ada yang gagal, cari penyebabnya
-   dulu sebelum mengerjakan hal lain.
-3. Ringkas ke saya dalam beberapa kalimat: status proyek, hal yang belum dikerjakan,
-   dan jebakan yang perlu diingat.
-
-Aturan kerja:
-- Pakai bahasa Indonesia untuk penjelasan, teks antarmuka, dan pesan commit.
-- Jangan ubah keputusan di tabel "Keputusan yang sudah diambil" tanpa bertanya.
-- Pertahankan penyimpangan desain yang disengaja (warna teks status versi gelap,
-  palet grafik tervalidasi, arah harga selalu ikon + teks).
-- Setiap fitur baru harus punya feature test di tests/Feature, dan `php artisan test`
-  harus lolos sebelum dinyatakan selesai.
-- Repo ini publik: jangan menulis kata sandi, isi .env, atau data pribadi ke dalam repo.
-- Tanya dulu sebelum push, deploy, membuka situs ke internet, atau menghapus data.
-
-Pekerjaan yang ingin saya lanjutkan:
-[tulis di sini, misalnya: "ganti nama pasar dan HET sesuai daftar dari Disperindag
-berikut: ..." atau "buat fitur impor harga dari file Excel"]
-```
+Proyek dikerjakan di lokal saja: revisi di-commit lokal, tanpa push.
