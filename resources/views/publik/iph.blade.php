@@ -1,0 +1,70 @@
+@extends('layouts.publik')
+@section('judul', 'Indikator Perubahan Harga (IPH)')
+
+@section('isi')
+<div class="kepala">
+    <div>
+        <h1>Indikator Perubahan Harga (IPH)</h1>
+        <p>Perubahan IPH mingguan Kabupaten Sumbawa Barat terhadap bulan sebelumnya.</p>
+    </div>
+</div>
+
+<form class="filter" method="get">
+    <label>Tahun
+        <select name="tahun">
+            <option value="">Semua tahun</option>
+            @foreach ($daftarTahun as $t)<option @selected($tahun == $t)>{{ $t }}</option>@endforeach
+        </select>
+    </label>
+    <button class="btn">Tampilkan</button>
+    @if ($data->isNotEmpty())<a class="btn garis" href="{{ request()->fullUrlWithQuery(['unduh' => 'csv']) }}">Unduh CSV</a>@endif
+</form>
+
+@if ($data->isEmpty())
+    <div class="catatan">Belum ada data IPH.</div>
+@else
+<div class="grid" style="grid-template-columns:minmax(0,2fr) minmax(260px,1fr)">
+    <div class="kartu">
+        <h2>Perubahan IPH per minggu (%)</h2>
+        <div class="legenda"><span><i class="kotak" style="background:var(--div-naik)"></i>Naik (harga menguat)</span><span><i class="kotak" style="background:var(--div-turun)"></i>Turun (harga melemah)</span></div>
+        <div class="grafik"><canvas id="g-iph" role="img" aria-label="Grafik perubahan IPH mingguan"></canvas></div>
+    </div>
+    <div class="kartu">
+        <h2>Paling sering jadi pemberi andil</h2>
+        <p class="kecil muted">Berapa kali komoditas masuk daftar pemberi andil, dalam {{ $data->count() }} minggu yang ditampilkan.</p>
+        @php($maks = max(1, $andil->max() ?? 1))
+        @foreach ($andil as $nama => $n)
+            <div style="margin:10px 0">
+                <div style="display:flex;justify-content:space-between;font-size:.9rem"><span>{{ $nama }}</span><span class="num muted">{{ $n }} minggu</span></div>
+                <div class="progres"><i style="width:{{ $n / $maks * 100 }}%"></i></div>
+            </div>
+        @endforeach
+    </div>
+</div>
+
+<section class="seksi">
+    <h2>Tabel IPH</h2>
+    <div class="tabel-wrap">
+        <table>
+            <thead><tr><th>Periode</th><th class="r">Perubahan IPH</th><th>Komoditas pemberi andil</th><th>Sumber</th></tr></thead>
+            <tbody>
+            @foreach ($data->reverse() as $d)
+                <tr>
+                    <td>Minggu ke-{{ $d->minggu_ke }} {{ bulan_nama($d->bulan) }} {{ $d->tahun }}</td>
+                    <td class="r"><span class="arah {{ $d->perubahan_iph > 0 ? 'naik' : ($d->perubahan_iph < 0 ? 'turun' : 'stabil') }}">{{ persen($d->perubahan_iph) }}</span></td>
+                    <td>{{ $d->komoditas_andil ?: '-' }}</td>
+                    <td class="muted kecil">{{ $d->sumber }}</td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
+</section>
+@endif
+@endsection
+
+@push('js')
+@if ($data->isNotEmpty())
+<script>Grafik.batangPersen(document.getElementById('g-iph'), @json($data->map->label), @json($data->pluck('perubahan_iph')));</script>
+@endif
+@endpush
